@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../providers";
 import { Post } from "@/types";
 import { useEffect, useState } from "react";
+import { create } from "domain";
 
 export default function HomePage() {
   const { user, logout } = useAuth();
@@ -19,12 +20,23 @@ export default function HomePage() {
     const data = await res.json();
     setPosts(data);
   };
+  const deletePost = async (id: string) => {
+    await fetch("/api/posts", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    await fetchPosts(); // 삭제 후 목록 새로고침
+  };
   useEffect(() => {
     fetchPosts();
   }, []);
 
   const createPost = async () => {
-    const now = new Date().toLocaleString();
+    const now = new Date().toISOString().slice(0, 19).replace("T", " ");
     await fetch("/api/posts", {
       method: "POST",
       headers: {
@@ -34,10 +46,12 @@ export default function HomePage() {
         title: `홈에서 생성 - ${now}`,
         content: `버튼 클릭으로 생성됨 -(${now})`,
         author: user,
+        createdAt: now,
       }),
     });
 
     alert("글 생성 완료");
+    await fetchPosts();
   };
 
   return (
@@ -52,7 +66,9 @@ export default function HomePage() {
           <div>{item.content}</div>
           <div>author : {item.author}</div>
           <div>{item.createdAt}</div>
-          {item.author === user && <button>삭제</button>}
+          {item.author === user && (
+            <button onClick={() => deletePost(item.id)}>삭제</button>
+          )}
           <hr />
         </div>
       ))}

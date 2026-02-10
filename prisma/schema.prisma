@@ -14,10 +14,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id    String @id
+  posts Post[]
+}
+
 model Post {
   id        String   @id @default(uuid())
   title     String
   content   String
-  author    String?
+
+  authorId String?
+  author    User? @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
 }
