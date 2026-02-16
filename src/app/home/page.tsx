@@ -31,15 +31,13 @@ export default function HomePage() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        "x-user-id": user ?? "",
       },
       body: JSON.stringify({ id }),
     });
-
+    alert("글 삭제 완료");
     await fetchPosts(); // 삭제 후 목록 새로고침
   };
-  useEffect(() => {
-    fetchPosts();
-  }, []);
 
   const createPost = async () => {
     const now = new Date().toISOString().slice(0, 19).replace("T", " ");
@@ -59,6 +57,10 @@ export default function HomePage() {
     alert("글 생성 완료");
     await fetchPosts();
   };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   return (
     <div>

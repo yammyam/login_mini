@@ -31,7 +31,20 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const userId = req.headers.get("x-user-id");
+  if (!userId)
+    return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+
   const { id } = await req.json();
+
+  //삭제대상 글가져오기
+  const post = await prisma.post.findUnique({ where: { id } });
+  if (!post) return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+
+  //  작성자 체크 (인가)
+  if (post.authorId !== userId) {
+    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
+  }
 
   await prisma.post.delete({
     where: { id },
