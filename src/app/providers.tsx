@@ -21,10 +21,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const saved = localStorage.getItem("auth_user");
     if (saved) setUser(saved);
   }, []);
+
   const login = (id: string) => {
     setUser(id);
     localStorage.setItem("auth_user", id);
   };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem("auth_user");

@@ -14,8 +14,14 @@ export default function HomePage() {
     router.push("/login");
   };
   const [posts, setPosts] = useState<Post[]>([]);
+
   const fetchPosts = async () => {
-    const res = await fetch("/api/posts", { cache: "no-store" });
+    const res = await fetch(`/api/posts?authorId=${user}`, {
+      cache: "no-store",
+      headers: {
+        "x-user-id": user ?? "",
+      },
+    });
     const data = await res.json();
     setPosts(data);
   };
