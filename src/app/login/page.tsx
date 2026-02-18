@@ -20,13 +20,18 @@ export default function Page() {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // 🔹 추가: form submit 기본 동작 방지
     const user = dummyUsers.find(
       (u) => u.id === form.id && u.password === form.password
     );
 
     if (user) {
+      await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: user.id }),
+      });
       login(user.id); // 🔹 로그인 상태 업데이트
       router.push("/home"); // 🔹 로그인 성공 시 홈 페이지로 이동
     } else {
