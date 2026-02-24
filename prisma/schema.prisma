@@ -17,6 +17,7 @@ datasource db {
 model User {
   id    String @id
   posts Post[]
+  sessions Session[]
 }
 
 model Post {
@@ -27,4 +28,14 @@ model Post {
   authorId String?
   author    User? @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([userId])
 }
