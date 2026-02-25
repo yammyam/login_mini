@@ -1,13 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { getCurrentUserId } from "@/lib/auth";
 
 export async function GET(req: Request) {
-  const cookieStore = await cookies();
-  const userId = cookieStore.get("session_user")?.value;
-  if (!userId) {
-    return NextResponse.json([]);
-  }
+  const userId = await getCurrentUserId();
+  if (!userId)
+    return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+  // const cookieStore = await cookies();
+  // // const userId = cookieStore.get("session_user")?.value;
+  // // if (!userId) {
+  // //   return NextResponse.json([]);
+  // // }
 
   const posts = await prisma.post.findMany({
     where: { authorId: userId },
