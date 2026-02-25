@@ -18,9 +18,6 @@ export default function HomePage() {
   const fetchPosts = async () => {
     const res = await fetch(`/api/posts?authorId=${user}`, {
       cache: "no-store",
-      headers: {
-        "x-user-id": user ?? "",
-      },
     });
     const data = await res.json();
     setPosts(data);
