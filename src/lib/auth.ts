@@ -12,7 +12,12 @@ export async function getCurrentUserId() {
   });
 
   if (!session) return null;
-  if (session.expiresAt < new Date()) return null; // 만료
+  if (session.expiresAt < new Date()) {
+    await prisma.session.delete({
+      where: { id: sessionId },
+    });
+    return null;
+  } // 만료
 
   return session.userId;
 }
