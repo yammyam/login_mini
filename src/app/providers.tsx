@@ -27,9 +27,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("auth_user", id);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await fetch("/api/logout", { method: "POST" });
     setUser(null);
-    localStorage.removeItem("auth_user");
+    // localStorage.removeItem("auth_user");
   };
 
   return (
