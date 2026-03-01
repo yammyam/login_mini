@@ -18,6 +18,7 @@ model User {
   id    String @id
   posts Post[]
   sessions Session[]
+  passwordHash String?
 }
 
 model Post {

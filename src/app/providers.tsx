@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     await fetch("/api/logout", { method: "POST" });
     setUser(null);
-    // localStorage.removeItem("auth_user");
+    localStorage.removeItem("auth_user");
   };
 
   return (
@@ -41,6 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useAuth = () => {
+  // 그냥 일일히 useContext해서 꺼내는작업을 단축하기위한 함수
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used inside AuthProvider");
   return context;

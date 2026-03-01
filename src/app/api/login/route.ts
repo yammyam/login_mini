@@ -7,12 +7,14 @@ export async function POST(req: Request) {
   const { id } = await req.json();
 
   // 2) 세션 만료시간 설정 (예: 7일)
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  // const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + 60 * 1000); //휘발성 테스트 세션용
+  const cookieExpires = new Date(Date.now() + 10 * 60 * 1000); //세션이 읽을수있도록 브라우저 쿠키는 좀길게
   // 3) DB에 세션 생성 (sessionId는 자동 생성됨)
   const session = await prisma.session.create({
     data: {
       userId: id,
-      expiresAt,
+      expiresAt, //DB세션에 저장되는건 1분
     },
     select: { id: true },
   });
@@ -22,7 +24,7 @@ export async function POST(req: Request) {
     httpOnly: true,
     sameSite: "lax",
     path: "/",
-    expires: expiresAt,
+    expires: cookieExpires,
   });
 
   return NextResponse.json({ ok: true });

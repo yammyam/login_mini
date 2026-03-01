@@ -6,7 +6,7 @@ import { getCurrentUserId } from "@/lib/auth";
 export async function GET(req: Request) {
   const userId = await getCurrentUserId();
   if (!userId)
-    return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   // const cookieStore = await cookies();
   // const userId = cookieStore.get("session_user")?.value;
   // if (!userId) {
