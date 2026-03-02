@@ -84,16 +84,11 @@ export default function LoungePage() {
 
           {/* ✅ 내 글일 때만 수정/삭제 */}
           {item.authorId === user && (
-            <div style={{ marginTop: 8 }}>
+            <div>
               <button onClick={() => router.push(`/posts/${item.id}/edit`)}>
                 수정
               </button>
-              <button
-                onClick={() => deletePost(item.id)}
-                style={{ marginLeft: 8 }}
-              >
-                삭제
-              </button>
+              <button onClick={() => deletePost(item.id)}>삭제</button>
             </div>
           )}
 
