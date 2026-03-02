@@ -1,12 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
+// import { cookies } from "next/headers";
 import { getCurrentUserId } from "@/lib/auth";
 
-export async function GET(req: Request) {
-  const userId = await getCurrentUserId();
-  if (!userId)
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+export async function GET() {
   // const cookieStore = await cookies();
   // const userId = cookieStore.get("session_user")?.value;
   // if (!userId) {
@@ -15,7 +12,6 @@ export async function GET(req: Request) {
   // 이제 쿠키로 인증하는 방식대신 세션의 session_id랑 일치하는 서버의 userId알아오기위해 변경
 
   const posts = await prisma.post.findMany({
-    where: { authorId: userId },
     orderBy: { createdAt: "desc" },
   });
   return NextResponse.json(posts);

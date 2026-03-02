@@ -13,12 +13,14 @@ export async function getCurrentUserId() {
   });
   console.log("[auth] session from db:", session);
   if (!session) return null;
-  console.log("[auth] now ISO:", new Date().toISOString());
+
+  const now = new Date(); //  한 번만 만들기
+  console.log("[auth] now ISO:", now.toISOString());
   console.log("[auth] expiresAt ISO:", session.expiresAt.toISOString());
 
-  if (session.expiresAt < new Date()) {
+  if (session.expiresAt < now) {
     console.log("[auth] EXPIRED -> delete cookie & session", sessionId);
-    cookieStore.delete("session_user");
+    // cookieStore.delete("session_user");
     await prisma.session.delete({
       where: { id: sessionId },
     });

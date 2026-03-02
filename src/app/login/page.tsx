@@ -34,7 +34,7 @@ export default function Page() {
     });
     if (res.ok) {
       login(form.id); // 프론트 상태("환영합니다 user1" 표시용)
-      router.push("/home"); // 이동
+      router.push("/lounge"); // 이동
       return;
     }
     let msg = "비밀번호 또는 아이디가 틀렸습니다.";
@@ -79,7 +79,14 @@ export default function Page() {
         />
         {error && <p className={style.error}>{error}</p>}
         <button className={style.button} type="submit">
-          LOGIN
+          로그인
+        </button>
+        <button
+          className={style.button}
+          type="button"
+          onClick={() => router.push("/signup")}
+        >
+          회원가입
         </button>
       </form>
     </div>
