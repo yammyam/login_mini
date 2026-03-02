@@ -76,6 +76,7 @@ export default function Page() {
           type="password"
           placeholder="비밀번호"
           ref={passwordRef}
+          autoComplete="current-password"
         />
         {error && <p className={style.error}>{error}</p>}
         <button className={style.button} type="submit">

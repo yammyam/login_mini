@@ -6,8 +6,8 @@ import { Post } from "@/types";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  //   const [title, setTitle] = useState("");
+  //   const [content, setContent] = useState("");
   const { user, logout } = useAuth(); //콘텍스트가 옴 객체로 거기서 user와 logout만 꺼내겠다.
   const router = useRouter();
 

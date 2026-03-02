@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import type { Post } from "@/types";
 
 export default function PostDetailPage() {
+  const [canEdit, setCanEdit] = useState(false);
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const id = params.id;
@@ -16,14 +17,14 @@ export default function PostDetailPage() {
   const fetchPost = async () => {
     const res = await fetch(`/api/posts/${id}`, { cache: "no-store" });
 
-    if (res.status === 401) {
-      alert("로그인이 필요합니다.");
-      router.replace("/login");
-      return;
-    }
+    // if (res.status === 401) {
+    //   alert("로그인이 필요합니다.");
+    //   router.replace("/login");
+    //   return;
+    // }
     if (res.status === 404) {
       alert("글을 찾을 수 없습니다.");
-      router.replace("/home");
+      router.replace("/lounge");
       return;
     }
     if (!res.ok) {
@@ -33,7 +34,8 @@ export default function PostDetailPage() {
     }
 
     const data = await res.json();
-    setPost(data);
+    setPost(data.post);
+    setCanEdit(data.canEdit);
   };
 
   useEffect(() => {
@@ -71,7 +73,7 @@ export default function PostDetailPage() {
     }
 
     alert("삭제 완료");
-    router.replace("/home");
+    router.replace("/lounge");
     router.refresh();
   };
 
@@ -80,7 +82,7 @@ export default function PostDetailPage() {
 
   return (
     <div>
-      <button onClick={() => router.push(`/home`)}>홈으로</button>
+      <button onClick={() => router.push(`/lounge`)}>홈으로</button>
       <h1>{post.title}</h1>
       <div>글쓴이 - {post.authorId}</div>
       <br />
@@ -88,12 +90,14 @@ export default function PostDetailPage() {
 
       <div>{new Date(post.createdAt).toLocaleString("ko-KR")}</div>
 
-      <div style={{ marginTop: 12 }}>
-        <button onClick={() => router.push(`/posts/${id}/edit`)}>수정</button>
-        <button onClick={onDelete} style={{ marginLeft: 8 }}>
-          삭제
-        </button>
-      </div>
+      {canEdit && (
+        <div style={{ marginTop: 12 }}>
+          <button onClick={() => router.push(`/posts/${id}/edit`)}>수정</button>
+          <button onClick={onDelete} style={{ marginLeft: 8 }}>
+            삭제
+          </button>
+        </div>
+      )}
     </div>
   );
 }

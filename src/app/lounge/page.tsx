@@ -14,7 +14,6 @@ export default function LoungePage() {
   const fetchPosts = async () => {
     const res = await fetch("/api/posts", {
       cache: "no-store",
-      credentials: "include", // 로그인 안 해도 보여줄 거면 없어도 되긴 함
     });
 
     if (!res.ok) {
@@ -63,26 +62,30 @@ export default function LoungePage() {
   return (
     <div>
       <h1>목록</h1>
-      <button onClick={handleLogout}>로그아웃</button>
-      <button onClick={() => router.push("/write")}>글 작성</button>
-      <button onClick={() => router.push("/mypage")}>마이페이지</button>
-
+      {user ? (
+        <>
+          <button onClick={handleLogout}>로그아웃</button>
+          <button onClick={() => router.push("/write")}>글 작성</button>
+          <button onClick={() => router.push("/mypage")}>마이페이지</button>
+        </>
+      ) : (
+        <button onClick={() => router.push("/login")}>로그인</button>
+      )}
       <hr />
-
       {posts.map((item) => (
         <div key={item.id}>
           <div
             style={{ cursor: "pointer", textDecoration: "underline" }}
             onClick={() => router.push(`/posts/${item.id}`)}
           >
-            {item.title}
+            제목 - {item.title}
           </div>
 
           <div>{item.content}</div>
-          <div>author: {item.authorId ?? "익명"}</div>
+          <div>글쓴이 - {item.authorId ?? "익명"}</div>
           <div>{new Date(item.createdAt).toLocaleString("ko-KR")}</div>
 
-          {/* ✅ 내 글일 때만 수정/삭제 */}
+          {/*  내 글일 때만 수정/삭제 */}
           {item.authorId === user && (
             <div>
               <button onClick={() => router.push(`/posts/${item.id}/edit`)}>

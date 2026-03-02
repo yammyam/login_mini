@@ -27,7 +27,7 @@ export default function PostEditPage() {
         }
         if (res.status === 404) {
           alert("글을 찾을 수 없습니다.");
-          router.replace("/home");
+          router.replace("/lounge");
           return;
         }
         if (!res.ok) {

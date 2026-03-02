@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  // ✅ URL에서 id 직접 파싱 (타입 문제 없음)
+  // URL에서 id 직접 파싱 (타입 문제 없음)
   const url = new URL(req.url);
   const postId = url.pathname.split("/").pop();
 
@@ -16,13 +16,14 @@ export async function GET(req: Request) {
     return NextResponse.json({ message: "Bad Request" }, { status: 400 });
   }
 
-  const post = await prisma.post.findFirst({
-    where: { id: postId, authorId: userId },
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
   });
 
   if (!post) {
     return NextResponse.json({ message: "Not Found" }, { status: 404 });
   }
 
-  return NextResponse.json(post);
+  const canEdit = !!userId && post.authorId === userId;
+  return NextResponse.json({ post, canEdit });
 }

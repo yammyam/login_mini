@@ -37,7 +37,7 @@ export default function WritePage() {
       }
 
       // 작성 완료 → 목록으로
-      router.push("/home");
+      router.push("/lounge");
       router.refresh(); // (선택) 서버/캐시 갱신에 도움
     } finally {
       setLoading(false);
