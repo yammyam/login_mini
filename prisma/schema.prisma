@@ -18,7 +18,7 @@ model User {
   id    String @id
   posts Post[]
   sessions Session[]
-  passwordHash String?
+  passwordHash String
 }
 
 model Post {
@@ -26,8 +26,8 @@ model Post {
   title     String
   content   String
 
-  authorId String?
-  author    User? @relation(fields: [authorId], references: [id])
+  authorId String
+  author    User @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
 }
 

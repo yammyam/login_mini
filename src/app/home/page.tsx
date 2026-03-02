@@ -40,7 +40,6 @@ export default function HomePage() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": user ?? "",
       },
       body: JSON.stringify({ id }),
     });
@@ -49,17 +48,16 @@ export default function HomePage() {
   };
 
   const createPost = async () => {
-    const now = new Date().toISOString().slice(0, 19).replace("T", " ");
     await fetch("/api/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title: `홈에서 생성 - ${now}`,
-        content: `버튼 클릭으로 생성됨 -(${now})`,
-        authorId: user,
-        createdAt: now,
+        title: `홈에서 생성`,
+        content: `버튼 클릭으로 생성됨`,
+        // createdAt: now, 서버로 보내는건데 이렇게 프론트에서 서버로 시간을 보내면 조작위험이 있음.
+        // -> 고로 서버에서 찍히는 시간을 프론트쪽으로 불러와서 보여주는게 안전
       }),
     });
 
@@ -82,7 +80,7 @@ export default function HomePage() {
           <div>{item.title}</div>
           <div>{item.content}</div>
           <div>author : {item.authorId}</div>
-          <div>{item.createdAt}</div>
+          <div>{new Date(item.createdAt).toLocaleString("ko-KR")}</div>
           {item.authorId === user && (
             <button onClick={() => deletePost(item.id)}>삭제</button>
           )}
