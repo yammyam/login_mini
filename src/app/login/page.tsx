@@ -1,7 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-// import { dummyUsers } from "../data/dummyUsers";
 import { useAuth } from "../providers";
 import style from "./page.module.css";
 
@@ -33,7 +32,8 @@ export default function Page() {
       body: JSON.stringify({ id: form.id, password: form.password }),
     });
     if (res.ok) {
-      login(form.id); // 프론트 상태("환영합니다 user1" 표시용)
+      // login(form.id); // 프론트 상태("환영합니다 user1" 표시용)
+      await login();
       router.push("/lounge"); // 이동
       return;
     }

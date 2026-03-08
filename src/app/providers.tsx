@@ -1,4 +1,5 @@
 "use client";
+import { promises } from "dns";
 import {
   createContext,
   useState,
@@ -9,32 +10,64 @@ import {
 
 type AuthContextType = {
   user: string | null;
-  login: (id: string) => void;
-  logout: () => void;
+  authChecked: boolean;
+  // login: (id: string) => void;
+  login: () => Promise<void>;
+  logout: () => Promise<void>;
+  refreshAuth: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  const refreshAuth = async () => {
+    try {
+      const res = await fetch("/api/me", {
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        setUser(null);
+        return;
+      }
+
+      const data = await res.json();
+      setUser(data.user);
+    } catch {
+      setUser(null);
+    } finally {
+      setAuthChecked(true);
+    }
+  };
+  // useEffect(() => {
+  //   const saved = localStorage.getItem("auth_user");
+  //   if (saved) setUser(saved);
+  // }, []);
   useEffect(() => {
-    const saved = localStorage.getItem("auth_user");
-    if (saved) setUser(saved);
+    refreshAuth();
   }, []);
 
-  const login = (id: string) => {
-    setUser(id);
-    localStorage.setItem("auth_user", id);
+  const login = async () => {
+    await refreshAuth();
   };
+  // const login = (id: string) => {
+  //   setUser(id);
+  //   localStorage.setItem("auth_user", id);
+  // };
 
   const logout = async () => {
     await fetch("/api/logout", { method: "POST" });
     setUser(null);
-    localStorage.removeItem("auth_user");
+    // localStorage.removeItem("auth_user");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, authChecked, login, logout, refreshAuth }}
+    >
       {children}
     </AuthContext.Provider>
   );

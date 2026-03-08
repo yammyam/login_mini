@@ -8,7 +8,7 @@ import type { Post } from "@/types";
 
 export default function LoungePage() {
   const router = useRouter();
-  const { user, logout } = useAuth(); // user = userId (string | null)
+  const { user, logout, authChecked } = useAuth(); // user = userId (string | null)
   const [posts, setPosts] = useState<Post[]>([]);
 
   const fetchPosts = async () => {
@@ -62,15 +62,16 @@ export default function LoungePage() {
   return (
     <div>
       <h1>목록</h1>
-      {user ? (
-        <>
-          <button onClick={handleLogout}>로그아웃</button>
-          <button onClick={() => router.push("/write")}>글 작성</button>
-          <button onClick={() => router.push("/mypage")}>마이페이지</button>
-        </>
-      ) : (
-        <button onClick={() => router.push("/login")}>로그인</button>
-      )}
+      {authChecked &&
+        (user ? (
+          <>
+            <button onClick={handleLogout}>로그아웃</button>
+            <button onClick={() => router.push("/write")}>글 작성</button>
+            <button onClick={() => router.push("/mypage")}>마이페이지</button>
+          </>
+        ) : (
+          <button onClick={() => router.push("/login")}>로그인</button>
+        ))}
       <hr />
       {posts.map((item) => (
         <div key={item.id}>

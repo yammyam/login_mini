@@ -5,11 +5,21 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import type { Post } from "@/types";
 
+type Comment = {
+  id: string;
+  content: string;
+  createdAt: string;
+  authorId: string;
+};
+
 export default function PostDetailPage() {
   const [canEdit, setCanEdit] = useState(false);
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const id = params.id;
+
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentText, setCommentText] = useState("");
 
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,10 +48,26 @@ export default function PostDetailPage() {
     setCanEdit(data.canEdit);
   };
 
+  const fetchComments = async () => {
+    const res = await fetch(`/api/posts/${id}/comments`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      console.error("댓글 불러오기 실패", await res.text());
+      setComments([]);
+      return;
+    }
+
+    const data = await res.json();
+    setComments(data);
+  };
+
   useEffect(() => {
     (async () => {
       try {
         await fetchPost();
+        await fetchComments();
       } finally {
         setLoading(false);
       }
@@ -77,6 +103,37 @@ export default function PostDetailPage() {
     router.refresh();
   };
 
+  const createComment = async () => {
+    if (!commentText.trim()) {
+      alert("댓글을 입력하세요.");
+      return;
+    }
+
+    const res = await fetch(`/api/posts/${id}/comments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        content: commentText,
+      }),
+    });
+
+    if (res.status === 401) {
+      alert("로그인이 필요합니다.");
+      router.replace("/login");
+      return;
+    }
+
+    if (!res.ok) {
+      alert("댓글 작성 실패");
+      return;
+    }
+
+    setCommentText("");
+    await fetchComments();
+  };
+
   if (loading) return <div>불러오는 중...</div>;
   if (!post) return <div>데이터가 없습니다.</div>;
 
@@ -98,6 +155,33 @@ export default function PostDetailPage() {
           </button>
         </div>
       )}
+      <hr />
+      <h3>댓글</h3>
+
+      <textarea
+        value={commentText}
+        onChange={(e) => setCommentText(e.target.value)}
+        placeholder="댓글 작성"
+        rows={3}
+      />
+
+      <br />
+
+      <button onClick={createComment}>댓글 작성</button>
+
+      <hr />
+
+      {comments.map((c) => (
+        <div key={c.id}>
+          <div>
+            {c.authorId} | {new Date(c.createdAt).toLocaleString("ko-KR")}
+          </div>
+
+          <div>{c.content}</div>
+
+          <hr />
+        </div>
+      ))}
     </div>
   );
 }
