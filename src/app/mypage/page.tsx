@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import ui from "../styles/ui.module.css";
 import styles from "./page.module.css";
 
-export default function HomePage() {
+export default function MyPage() {
   //   const [title, setTitle] = useState("");
   //   const [content, setContent] = useState("");
   const { user, logout } = useAuth(); //콘텍스트가 옴, 객체로 거기서 user와 logout만 꺼내겠다.

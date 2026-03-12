@@ -3,6 +3,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import ui from "../styles/ui.module.css";
+import styles from "./page.module.css";
 
 export default function WritePage() {
   const router = useRouter();
@@ -45,46 +47,53 @@ export default function WritePage() {
   };
 
   return (
-    <div>
-      <h1>글 작성</h1>
+    <div className={styles.container}>
+      <div className={styles.topBar}>
+        <button className={ui.button} onClick={() => router.back()}>
+          뒤로가기
+        </button>
+      </div>
 
-      <form onSubmit={onSubmit}>
-        <div>
-          <label>제목</label>
-          <br />
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="제목"
-          />
-        </div>
+      <div className={styles.card}>
+        <h1 className={styles.title}>글 작성</h1>
 
-        <div style={{ marginTop: 12 }}>
-          <label>내용</label>
-          <br />
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="내용"
-            rows={8}
-          />
-        </div>
+        <form className={styles.subText} onSubmit={onSubmit}>
+          <div className={styles.field}>
+            <label className={styles.label}>제목</label>
+            <input
+              className={ui.input}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="제목"
+            />
+          </div>
 
-        <div style={{ marginTop: 12 }}>
-          <button type="submit" disabled={loading}>
-            {loading ? "작성 중..." : "작성"}
-          </button>
+          <div className={styles.field}>
+            <label className={styles.label}>내용</label>
+            <textarea
+              className={ui.textarea}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="내용"
+              rows={8}
+            />
+          </div>
 
-          <button
-            type="button"
-            onClick={() => router.back()}
-            disabled={loading}
-            style={{ marginLeft: 8 }}
-          >
-            취소
-          </button>
-        </div>
-      </form>
+          <div className={styles.actions}>
+            <button className={ui.button} type="submit" disabled={loading}>
+              {loading ? "작성 중..." : "작성"}
+            </button>
+            <button
+              className={styles.secondaryButton}
+              type="button"
+              onClick={() => router.back()}
+              disabled={loading}
+            >
+              취소
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
