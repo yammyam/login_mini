@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../providers";
 import type { Post } from "@/types";
+import styles from "./page.module.css";
+import ui from "../styles/ui.module.css";
 
 export default function LoungePage() {
   const router = useRouter();
@@ -60,45 +62,81 @@ export default function LoungePage() {
   };
 
   return (
-    <div>
-      <h1>목록</h1>
-      {authChecked &&
-        (user ? (
-          <>
-            <button onClick={handleLogout}>로그아웃</button>
-            <button onClick={() => router.push("/write")}>글 작성</button>
-            <button onClick={() => router.push("/mypage")}>마이페이지</button>
-          </>
-        ) : (
-          <button onClick={() => router.push("/login")}>로그인</button>
-        ))}
-      <hr />
-      {posts.map((item) => (
-        <div key={item.id}>
-          <div
-            style={{ cursor: "pointer", textDecoration: "underline" }}
-            onClick={() => router.push(`/posts/${item.id}`)}
-          >
-            제목 - {item.title}
-          </div>
-
-          <div>{item.content}</div>
-          <div>글쓴이 - {item.authorId ?? "익명"}</div>
-          <div>{new Date(item.createdAt).toLocaleString("ko-KR")}</div>
-
-          {/*  내 글일 때만 수정/삭제 */}
-          {item.authorId === user && (
-            <div>
-              <button onClick={() => router.push(`/posts/${item.id}/edit`)}>
-                수정
+    <div className={styles.container}>
+      <div className={styles.headerRow}>
+        <h1 className={styles.pageTitle}>목록</h1>
+        <div className={styles.topActions}>
+          {authChecked &&
+            (user ? (
+              <>
+                <button className={ui.button} onClick={handleLogout}>
+                  로그아웃
+                </button>
+                <button
+                  className={ui.button}
+                  onClick={() => router.push("/write")}
+                >
+                  글 작성
+                </button>
+                <button
+                  className={ui.button}
+                  onClick={() => router.push("/mypage")}
+                >
+                  마이페이지
+                </button>
+              </>
+            ) : (
+              <button
+                className={ui.button}
+                onClick={() => router.push("/login")}
+              >
+                로그인
               </button>
-              <button onClick={() => deletePost(item.id)}>삭제</button>
-            </div>
-          )}
-
-          <hr />
+            ))}
         </div>
-      ))}
+        <hr />
+
+        <div className={styles.postList}></div>
+        {posts.map((item) => (
+          <div key={item.id} className={styles.postCard}>
+            <div
+              className={styles.postTitle}
+              onClick={() => router.push(`/posts/${item.id}`)}
+            >
+              제목 - {item.title}
+            </div>
+
+            <div className={styles.postContent}>{item.content}</div>
+            <div className={styles.meta}>
+              글쓴이 - {item.authorId ?? "익명"}
+            </div>
+            <div className={styles.meta}>
+              {new Date(item.createdAt).toLocaleString("ko-KR")}
+            </div>
+            <div className={styles.meta}>댓글 {item._count.comments}</div>
+
+            {/*  내 글일 때만 수정/삭제 */}
+            {item.authorId === user && (
+              <div className={styles.postActions}>
+                <button
+                  className={ui.button}
+                  onClick={() => router.push(`/posts/${item.id}/edit`)}
+                >
+                  수정
+                </button>
+                <button
+                  className={ui.button}
+                  onClick={() => deletePost(item.id)}
+                >
+                  삭제
+                </button>
+              </div>
+            )}
+
+            <hr />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

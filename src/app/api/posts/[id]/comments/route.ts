@@ -19,7 +19,7 @@ export async function GET(req: Request) {
 
   const comments = await prisma.comment.findMany({
     where: { postId },
-    orderBy: { createdAt: "asc" },
+    orderBy: { createdAt: "desc" },
     select: {
       id: true,
       content: true,
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     data: {
       postId,
       content: content.trim(),
-      authorId: userId, // ✅ 필수
+      authorId: userId, //  필수
     },
     select: {
       id: true,

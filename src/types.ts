@@ -5,6 +5,9 @@ export interface Post {
   authorId: string | null;
   author?: { id: string } | null;
   createdAt: string;
+  _count: {
+    comments: number;
+  };
 }
 
 export type CommentItem = {

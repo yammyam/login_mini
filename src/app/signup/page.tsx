@@ -3,6 +3,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import styles from "./page.module.css";
+import ui from "../styles/ui.module.css";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -45,50 +47,43 @@ export default function SignupPage() {
   };
 
   return (
-    <div>
-      <h1>회원가입</h1>
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <h1 className={styles.title}>회원가입</h1>
 
-      <form onSubmit={onSubmit}>
-        <div>
-          <label>아이디</label>
-          <br />
-          <input
-            name="id"
-            autoComplete="username"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
-            placeholder="아이디"
-          />
-        </div>
+        <form className={styles.form} onSubmit={onSubmit}>
+          <div className={styles.field}>
+            <label className={styles.label}>아이디</label>
+            <input
+              className={ui.input}
+              name="id"
+              autoComplete="username"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+              placeholder="아이디"
+            />
+          </div>
 
-        <div style={{ marginTop: 12 }}>
-          <label>비밀번호</label>
-          <br />
-          <input
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="비밀번호"
-          />
-        </div>
+          <div className={styles.field}>
+            <label className={styles.label}>비밀번호</label>
+            <input
+              className={ui.input}
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="비밀번호"
+            />
+          </div>
 
-        <div style={{ marginTop: 12 }}>
-          <button type="submit" disabled={loading}>
-            {loading ? "가입 중..." : "회원가입"}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => router.replace("/login")}
-            disabled={loading}
-            style={{ marginLeft: 8 }}
-          >
-            로그인으로
-          </button>
-        </div>
-      </form>
+          <div className={styles.actions}>
+            <button className={ui.button} type="submit" disabled={loading}>
+              {loading ? "가입 중..." : "회원가입"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

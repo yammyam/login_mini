@@ -19,12 +19,48 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ message: "Bad Request" }, { status: 400 });
   }
 
-  // ✅ 내 댓글일 때만 삭제
+  // 내 댓글일 때만 삭제
   const deleted = await prisma.comment.deleteMany({
     where: { id: commentId, authorId: userId },
   });
 
   if (deleted.count === 0) {
+    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+  }
+
+  return NextResponse.json({ ok: true });
+}
+
+export async function PATCH(req: Request) {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const url = new URL(req.url);
+  const commentId = url.pathname.split("/").pop();
+
+  if (!commentId) {
+    return NextResponse.json({ message: "Bad Request" }, { status: 400 });
+  }
+
+  const { content } = await req.json();
+
+  if (!content?.trim()) {
+    return NextResponse.json({ message: "Bad Request" }, { status: 400 });
+  }
+
+  const updated = await prisma.comment.updateMany({
+    where: {
+      id: commentId,
+      authorId: userId,
+    },
+    data: {
+      content: content.trim(),
+    },
+  });
+
+  if (updated.count === 0) {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
   }
 

@@ -44,13 +44,14 @@
 
 .textarea {
   width: 100%;
-  min-height: 140px;
+  min-height: 120px;
   box-sizing: border-box;
   padding: 12px 14px;
   border: 1px solid #d1d5db;
   border-radius: 10px;
   resize: vertical;
   outline: none;
+  font-size: 14px;
 }
 
 .textarea:focus {
@@ -61,7 +62,7 @@
   align-self: flex-start;
   border: none;
   border-radius: 10px;
-  padding: 10px 16px;
+  padding: 10px 14px;
   background-color: #111827;
   color: white;
   cursor: pointer;

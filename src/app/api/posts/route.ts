@@ -13,6 +13,13 @@ export async function GET() {
 
   const posts = await prisma.post.findMany({
     orderBy: { createdAt: "desc" },
+    include: {
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
   });
   return NextResponse.json(posts);
 }

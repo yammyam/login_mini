@@ -1,0 +1,122 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px 0 24px;
+}
+
+.stateText {
+  padding: 20px 0;
+  color: #6b7280;
+}
+
+.topBar {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.postCard {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.postTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.metaRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+}
+
+.meta {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.postContent {
+  margin-top: 18px;
+  color: #374151;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.postActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.commentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.commentTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.commentWriteBox {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.commentWriteActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.commentList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.commentCard {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.commentMeta {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.commentContent {
+  color: #374151;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.commentEditBox {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.commentActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}

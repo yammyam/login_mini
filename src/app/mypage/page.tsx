@@ -4,18 +4,20 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../providers";
 import { Post } from "@/types";
 import { useEffect, useState } from "react";
+import ui from "../styles/ui.module.css";
+import styles from "./page.module.css";
 
 export default function HomePage() {
   //   const [title, setTitle] = useState("");
   //   const [content, setContent] = useState("");
-  const { user, logout } = useAuth(); //콘텍스트가 옴 객체로 거기서 user와 logout만 꺼내겠다.
+  const { user, logout } = useAuth(); //콘텍스트가 옴, 객체로 거기서 user와 logout만 꺼내겠다.
+  const [posts, setPosts] = useState<Post[]>([]);
   const router = useRouter();
 
   const handleLogout = () => {
     logout();
     router.push("/login");
   };
-  const [posts, setPosts] = useState<Post[]>([]);
 
   const fetchPosts = async () => {
     const res = await fetch(`/api/mypage/posts`, {
@@ -78,40 +80,63 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div>
-      <h1>환영합니다, {user ?? ""}</h1>
-      <button onClick={handleLogout}>로그아웃</button>
-      <button onClick={() => router.push("/write")}>글 작성하기</button>
-      <h2>내가 쓴 글</h2>
-      {posts.map((item) => (
-        <div key={item.id}>
-          <div
-            style={{ cursor: "pointer", textDecoration: "underline" }}
-            onClick={() => router.push(`/posts/${item.id}`)}
-          >
-            제목 - {item.title}
-          </div>
-          <div>글쓴이 - {item.authorId}</div>
-          <br />
-          <div>{item.content}</div>
-          <div>{new Date(item.createdAt).toLocaleString("ko-KR")}</div>
-          {/* {item.authorId === user && (
+    <div className={styles.container}>
+      <div className={styles.headerRow}>
+        <h1 className={styles.pageTitle}>환영합니다, {user ?? ""}</h1>
+        <div className={styles.topActions}>
+          <button className={ui.button} onClick={handleLogout}>
+            로그아웃
+          </button>
+          <button className={ui.button} onClick={() => router.push("/write")}>
+            글 작성하기
+          </button>
+        </div>
+      </div>
+
+      <div className={styles.sectionHeader}>
+        <h2 className={styles.sectionTitle}>내가 쓴 글 : {posts.length}개</h2>
+      </div>
+
+      <div className={styles.postList}>
+        {posts.map((item) => (
+          <div className={styles.postCard} key={item.id}>
+            <div
+              className={styles.postTitle}
+              onClick={() => router.push(`/posts/${item.id}`)}
+            >
+              제목 - {item.title}
+            </div>
+            <div className={styles.meta}>글쓴이 - {item.authorId}</div>
+            <div className={styles.postContent}>{item.content}</div>
+            <div className={styles.meta}>
+              {new Date(item.createdAt).toLocaleString("ko-KR")}
+            </div>
+            {/* {item.authorId === user && (
             <button onClick={() => deletePost(item.id)}>삭제</button>
           )}
           {item.authorId === user && (
             <button onClick={() => editPost(item.id)}>수정</button>
           )} */}
-          {item.authorId === user && (
-            <>
-              <button onClick={() => router.push(`/posts/${item.id}/edit`)}>
-                수정
-              </button>
-              <button onClick={() => deletePost(item.id)}>삭제</button>
-            </>
-          )}
-          <hr />
-        </div>
-      ))}
+            {item.authorId === user && (
+              <div className={styles.postActions}>
+                <button
+                  className={ui.button}
+                  onClick={() => router.push(`/posts/${item.id}/edit`)}
+                >
+                  수정
+                </button>
+                <button
+                  className={ui.button}
+                  onClick={() => deletePost(item.id)}
+                >
+                  삭제
+                </button>
+              </div>
+            )}
+            <hr />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

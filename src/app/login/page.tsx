@@ -68,6 +68,7 @@ export default function Page() {
           type="text"
           placeholder="아이디 또는 이메일"
           onChange={onChange}
+          autoComplete="username"
         />
         <input
           name="password"

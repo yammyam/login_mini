@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   // 1-2) 입력 검증
   if (!id || !password) {
     return NextResponse.json(
-      { message: "id와 password가 필요합니다." },
+      { message: "아이디와 비밀번호가 필요합니다." },
       { status: 400 }
     );
   }
@@ -34,10 +34,17 @@ export async function POST(req: Request) {
       { status: 401 }
     );
   }
-
+  await prisma.session.deleteMany({
+    where: {
+      userId: id,
+      expiresAt: {
+        lt: new Date(),
+      },
+    },
+  });
   // 2) 세션 만료시간 설정 (예: 7일)
   // const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 세션용 1분짜리
+  const expiresAt = new Date(Date.now() + 100 * 60 * 1000); // 세션용 1분짜리
   // 3) DB에 세션 생성 (sessionId는 자동 생성됨)
   const session = await prisma.session.create({
     data: {

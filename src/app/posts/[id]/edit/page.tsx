@@ -3,7 +3,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import type { Post } from "@/types";
+import styles from "./page.module.css";
+import ui from "../../../styles/ui.module.css";
 
 export default function PostEditPage() {
   const router = useRouter();
@@ -36,9 +37,9 @@ export default function PostEditPage() {
           return;
         }
 
-        const post: Post = await res.json();
-        setTitle(post.title);
-        setContent(post.content);
+        const data = await res.json();
+        setTitle(data.post?.title ?? "");
+        setContent(data.post?.content ?? "");
       } finally {
         setLoading(false);
       }
@@ -85,45 +86,52 @@ export default function PostEditPage() {
   if (loading) return <div>불러오는 중...</div>;
 
   return (
-    <div>
-      <h1>글 수정</h1>
+    <div className={styles.container}>
+      <div className={styles.topBar}>
+        <button className={ui.button} onClick={() => router.back()}>
+          뒤로가기
+        </button>
+      </div>
 
-      <form onSubmit={onSubmit}>
-        <div>
-          <label>제목</label>
-          <br />
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="제목"
-          />
-        </div>
+      <div className={styles.card}>
+        <h1 className={styles.title}>글 수정</h1>
+        <form className={styles.form} onSubmit={onSubmit}>
+          <div className={styles.field}>
+            <div className={styles.label}>제목</div>
+            <input
+              className={ui.input}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="제목"
+            />
+          </div>
 
-        <div style={{ marginTop: 12 }}>
-          <label>내용</label>
-          <br />
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="내용"
-            rows={8}
-          />
-        </div>
+          <div className={styles.field}>
+            <div className={styles.label}>내용</div>
+            <textarea
+              className={ui.textarea}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="내용"
+              rows={8}
+            />
+          </div>
 
-        <div style={{ marginTop: 12 }}>
-          <button type="submit" disabled={saving}>
-            {saving ? "저장 중..." : "저장"}
-          </button>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            disabled={saving}
-            style={{ marginLeft: 8 }}
-          >
-            취소
-          </button>
-        </div>
-      </form>
+          <div className={styles.actions}>
+            <button className={ui.button} type="submit" disabled={saving}>
+              {saving ? "저장 중..." : "저장"}
+            </button>
+            <button
+              className={styles.secondaryButton}
+              type="button"
+              onClick={() => router.back()}
+              disabled={saving}
+            >
+              취소
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
