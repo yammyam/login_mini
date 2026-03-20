@@ -12,6 +12,7 @@ export default function LoungePage() {
   const router = useRouter();
   const { user, logout, authChecked } = useAuth(); // user = userId (string | null)
   const [posts, setPosts] = useState<Post[]>([]);
+  const [search, setSearch] = useState("");
 
   const fetchPosts = async () => {
     const res = await fetch("/api/posts", {
@@ -94,48 +95,58 @@ export default function LoungePage() {
               </button>
             ))}
         </div>
-        <hr />
+
+        <input
+          className={styles.searchBar}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="검색어 입력"
+        />
 
         <div className={styles.postList}></div>
-        {posts.map((item) => (
-          <div key={item.id} className={styles.postCard}>
-            <div
-              className={styles.postTitle}
-              onClick={() => router.push(`/posts/${item.id}`)}
-            >
-              제목 - {item.title}
-            </div>
-
-            <div className={styles.postContent}>{item.content}</div>
-            <div className={styles.meta}>
-              글쓴이 - {item.authorId ?? "익명"}
-            </div>
-            <div className={styles.meta}>
-              {new Date(item.createdAt).toLocaleString("ko-KR")}
-            </div>
-            <div className={styles.meta}>댓글 {item._count.comments}</div>
-
-            {/*  내 글일 때만 수정/삭제 */}
-            {item.authorId === user && (
-              <div className={styles.postActions}>
-                <button
-                  className={ui.button}
-                  onClick={() => router.push(`/posts/${item.id}/edit`)}
-                >
-                  수정
-                </button>
-                <button
-                  className={ui.button}
-                  onClick={() => deletePost(item.id)}
-                >
-                  삭제
-                </button>
+        {posts
+          .filter((item) =>
+            item.title.toLowerCase().includes(search.toLowerCase())
+          )
+          .map((item) => (
+            <div key={item.id} className={styles.postCard}>
+              <div
+                className={styles.postTitle}
+                onClick={() => router.push(`/posts/${item.id}`)}
+              >
+                제목 - {item.title}
               </div>
-            )}
 
-            <hr />
-          </div>
-        ))}
+              <div className={styles.postContent}>{item.content}</div>
+              <div className={styles.meta}>
+                글쓴이 - {item.authorId ?? "익명"}
+              </div>
+              <div className={styles.meta}>
+                {new Date(item.createdAt).toLocaleString("ko-KR")}
+              </div>
+              <div className={styles.meta}>댓글 {item._count.comments}</div>
+
+              {/*  내 글일 때만 수정/삭제 */}
+              {item.authorId === user && (
+                <div className={styles.postActions}>
+                  <button
+                    className={ui.button}
+                    onClick={() => router.push(`/posts/${item.id}/edit`)}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className={ui.button}
+                    onClick={() => deletePost(item.id)}
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
+
+              <hr />
+            </div>
+          ))}
       </div>
     </div>
   );
