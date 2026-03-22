@@ -117,7 +117,7 @@ export default function MyPage() {
           <button className={ui.button} onClick={() => router.push("/write")}>
             글 작성하기
           </button>
-          <button className={ui.button} onClick={handleDeleteAccount}>
+          <button className={styles.dangerButton} onClick={handleDeleteAccount}>
             회원탈퇴
           </button>
         </div>
