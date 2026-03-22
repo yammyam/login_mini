@@ -26,7 +26,7 @@ export default function MyPage() {
       credentials: "include",
     });
     if (res.status === 401) {
-      alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+      alert("세션이 만료되었습니다. 다시 로그인해주세요.");
       setPosts([]); //  map 터짐 방지
       router.replace("/login");
       return;

@@ -20,7 +20,7 @@ export default function LoungePage() {
     });
 
     if (!res.ok) {
-      console.error("라운지 글목록 실패", await res.text());
+      console.error("라운지 글 로딩 실패", await res.text());
       setPosts([]);
       return;
     }
