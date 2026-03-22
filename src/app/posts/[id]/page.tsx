@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/app/providers";
+import Loading from "@/components/Loading";
 import type { Post } from "@/types";
 import ui from "../../styles/ui.module.css";
 import styles from "./page.module.css";
@@ -210,7 +211,8 @@ export default function PostDetailPage() {
     await fetchComments();
   };
 
-  if (loading) return <div>불러오는 중...</div>;
+  // if (loading) return <div>불러오는 중...</div>;
+  if (loading) return <Loading text="게시글 불러오는 중" />;
   if (!post) return <div>데이터가 없습니다.</div>;
 
   return (
@@ -226,7 +228,7 @@ export default function PostDetailPage() {
         )}
       </div>
       <div className={styles.postCard}>
-        <h1 className={styles.postTitle}>{post.title}</h1>
+        <h1 className={styles.postTitle}>제목 - {post.title}</h1>
 
         <div className={styles.metaRow}>
           <div className={styles.meta}>글쓴이 - {post.authorId}</div>

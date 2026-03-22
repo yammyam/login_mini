@@ -18,3 +18,8 @@ export type CommentItem = {
   authorId: string; // ✅ 이제 null 아님
   author?: { id: string };
 };
+
+export interface LoadingProps {
+  text?: string;
+  fullScreen?: boolean;
+}
