@@ -100,13 +100,15 @@ export default function LoungePage() {
           className={styles.searchBar}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="검색어 입력"
+          placeholder="제목 또는 내용의 키워드를 입력하세요!"
         />
 
         <div className={styles.postList}></div>
         {posts
-          .filter((item) =>
-            item.title.toLowerCase().includes(search.toLowerCase())
+          .filter(
+            (item) =>
+              item.title.toLowerCase().includes(search.toLowerCase()) ||
+              item.content.toLowerCase().includes(search.toLowerCase())
           )
           .map((item) => (
             <div key={item.id} className={styles.postCard}>

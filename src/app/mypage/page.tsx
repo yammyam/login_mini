@@ -13,6 +13,7 @@ export default function MyPage() {
   const { user, logout } = useAuth(); //콘텍스트가 옴, 객체로 거기서 user와 logout만 꺼내겠다.
   const [posts, setPosts] = useState<Post[]>([]);
   const router = useRouter();
+  const [search, setSearch] = useState("");
 
   const handleLogout = () => {
     logout();
@@ -75,6 +76,32 @@ export default function MyPage() {
   //   await fetchPosts();
   // };
 
+  const handleDeleteAccount = async () => {
+    if (!confirm("탈퇴하면 모든 정보가 삭제됩니다. 탈퇴 하시겠습니까?")) return;
+
+    const res = await fetch("/api/user", {
+      method: "DELETE",
+    });
+
+    if (res.status === 401) {
+      alert("로그인이 필요합니다.");
+      router.replace("/login");
+      return;
+    }
+
+    if (!res.ok) {
+      alert("회원탈퇴 실패");
+      return;
+    }
+
+    alert("회원탈퇴 완료");
+
+    // 로그아웃 처리
+    await logout();
+
+    router.replace("/lounge");
+  };
+
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -90,6 +117,9 @@ export default function MyPage() {
           <button className={ui.button} onClick={() => router.push("/write")}>
             글 작성하기
           </button>
+          <button className={ui.button} onClick={handleDeleteAccount}>
+            회원탈퇴
+          </button>
         </div>
       </div>
 
@@ -97,45 +127,58 @@ export default function MyPage() {
         <h2 className={styles.sectionTitle}>내가 쓴 글 : {posts.length}개</h2>
       </div>
 
+      <input
+        className={styles.searchBar}
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="내 글 검색"
+      />
+
       <div className={styles.postList}>
-        {posts.map((item) => (
-          <div className={styles.postCard} key={item.id}>
-            <div
-              className={styles.postTitle}
-              onClick={() => router.push(`/posts/${item.id}`)}
-            >
-              제목 - {item.title}
-            </div>
-            <div className={styles.meta}>글쓴이 - {item.authorId}</div>
-            <div className={styles.postContent}>{item.content}</div>
-            <div className={styles.meta}>
-              {new Date(item.createdAt).toLocaleString("ko-KR")}
-            </div>
-            {/* {item.authorId === user && (
+        {posts
+          .filter(
+            (item) =>
+              item.title.toLowerCase().includes(search.toLowerCase()) ||
+              item.content.toLowerCase().includes(search.toLowerCase())
+          )
+          .map((item) => (
+            <div className={styles.postCard} key={item.id}>
+              <div
+                className={styles.postTitle}
+                onClick={() => router.push(`/posts/${item.id}`)}
+              >
+                제목 - {item.title}
+              </div>
+              <div className={styles.meta}>글쓴이 - {item.authorId}</div>
+              <div className={styles.postContent}>{item.content}</div>
+              <div className={styles.meta}>
+                {new Date(item.createdAt).toLocaleString("ko-KR")}
+              </div>
+              {/* {item.authorId === user && (
             <button onClick={() => deletePost(item.id)}>삭제</button>
           )}
           {item.authorId === user && (
             <button onClick={() => editPost(item.id)}>수정</button>
           )} */}
-            {item.authorId === user && (
-              <div className={styles.postActions}>
-                <button
-                  className={ui.button}
-                  onClick={() => router.push(`/posts/${item.id}/edit`)}
-                >
-                  수정
-                </button>
-                <button
-                  className={ui.button}
-                  onClick={() => deletePost(item.id)}
-                >
-                  삭제
-                </button>
-              </div>
-            )}
-            <hr />
-          </div>
-        ))}
+              {item.authorId === user && (
+                <div className={styles.postActions}>
+                  <button
+                    className={ui.button}
+                    onClick={() => router.push(`/posts/${item.id}/edit`)}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className={ui.button}
+                    onClick={() => deletePost(item.id)}
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
+              <hr />
+            </div>
+          ))}
       </div>
     </div>
   );

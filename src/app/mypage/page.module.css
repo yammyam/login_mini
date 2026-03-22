@@ -75,6 +75,13 @@
   text-decoration: underline;
 }
 
+.searchBar {
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  padding: 18px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
 .postContent {
   margin: 12px 0;
   color: #374151;
