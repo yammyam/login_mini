@@ -1,36 +1,138 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Board Project
 
-## Getting Started
+개인 학습 기록과 게시글 관리를 위해 만든 게시판 프로젝트입니다.  
+단순 CRUD 구현을 넘어서, 로그인 상태 유지, 서버 기반 인증, 권한 검증, 검색 기능까지 직접 적용하며  
+프론트엔드 중심에서 풀스택 구조를 학습하기 위해 진행한 프로젝트입니다.
 
-First, run the development server:
+## 배포 링크
+
+- https://boardproject-lemon.vercel.app/
+
+## 프로젝트 소개
+
+이 프로젝트는 공부한 내용을 기록하고, 게시글 형태로 정리할 수 있도록 만든 개인 게시판 서비스입니다.  
+초기에는 프론트 상태와 더미 데이터 중심으로 동작하던 구조에서 시작해,  
+실제 DB 연동, 세션 기반 인증, 서버 권한 검증 구조로 점진적으로 개선했습니다.
+
+단순히 화면을 만드는 데서 끝나지 않고,  
+"로그인한 사용자인지", "작성자인지", "새로고침 후에도 인증이 유지되는지",  
+"클라이언트 조작 없이 서버가 권한을 검증하는지" 같은 실제 서비스 관점의 문제를 해결하는 데 집중했습니다.
+
+## 주요 기능
+
+- 회원가입 / 로그인 / 로그아웃
+- 세션 기반 인증 유지
+- 게시글 작성 / 수정 / 삭제 / 조회
+- 마이페이지에서 내 글 조회
+- 제목/내용 기반 검색 기능
+- 작성자만 수정/삭제 가능하도록 서버 권한 검증
+- 댓글 작성 및 조회
+- 게시글 삭제 시 댓글 Cascade 처리
+- 댓글 작성자 탈퇴 시 authorId SetNull 처리 가능하도록 관계 설계
+
+## 기술 스택
+
+### Frontend
+
+- Next.js
+- React
+- TypeScript
+- CSS Modules
+
+### Backend
+
+- Next.js Route Handler
+- Prisma ORM
+- PostgreSQL
+
+### Infra / Deploy
+
+- Supabase
+- Vercel
+
+## 기술적 포인트
+
+### 1. 세션 기반 인증 구조 적용
+
+초기에는 프론트 상태에 로그인 여부를 의존하는 방식으로 접근했지만,  
+새로고침 시 인증 상태가 무너지거나 클라이언트 조작에 취약한 문제가 있었습니다.
+
+이를 개선하기 위해 로그인 시 세션을 생성하고,  
+HttpOnly 쿠키에 sessionId를 저장한 뒤 서버에서 세션을 조회해 사용자를 식별하도록 변경했습니다.
+
+### 2. 서버 권한 검증 적용
+
+초기에는 클라이언트에서 전달한 사용자 정보에 의존할 수 있는 구조였지만,  
+이 방식은 DevTools 조작 등으로 타 사용자 데이터에 접근할 가능성이 있었습니다.
+
+이를 방지하기 위해 API 라우트에서 쿠키 기반으로 현재 사용자를 식별하고,  
+게시글 작성자와 요청 사용자가 일치하는 경우에만 수정/삭제를 허용하도록 서버 검증 로직을 적용했습니다.
+
+### 3. 인증 로직 공통화
+
+여러 API 라우트에서 반복되던 인증 확인 로직을 분리해  
+`getCurrentUserId()` 유틸 함수로 공통화했습니다.
+
+이를 통해 인증 로직 중복을 줄이고, 유지보수성을 개선했습니다.
+
+### 4. Prisma 관계 설계 (Cascade 정책 적용)
+
+게시글과 댓글, 사용자 간 관계를 Prisma 스키마로 설계하고,  
+데이터 정합성을 유지하기 위해 삭제 정책을 Cascade로 통일했습니다.
+
+- 게시글 삭제 시 해당 게시글의 댓글은 함께 삭제 (`onDelete: Cascade`)
+- 사용자 탈퇴 시 해당 사용자가 작성한 댓글 및 게시글도 함께 삭제 (`onDelete: Cascade`)
+
+이를 통해 불필요한 orphan 데이터(연결이 끊긴 데이터)를 방지하고,  
+데이터 관리 복잡도를 줄였습니다.
+
+### 5. 검색 기능 구현
+
+게시글 목록에서 제목/내용 기반 검색 기능을 구현해  
+사용자가 원하는 글을 빠르게 찾을 수 있도록 했습니다.
+
+---
+
+## 개선 경험
+
+### 문제 1. 새로고침 시 로그인 상태가 유지되지 않음
+
+- 원인: 프론트 상태에만 로그인 여부를 저장
+- 해결: 세션 테이블 + HttpOnly 쿠키 기반 인증 구조로 변경
+- 결과: 새로고침 이후에도 서버가 사용자 인증 상태를 복원 가능
+
+### 문제 2. 클라이언트 조작으로 타 사용자 데이터 접근 가능성
+
+- 원인: 클라이언트에서 전달한 사용자 정보 신뢰
+- 해결: 서버에서 쿠키 기반 사용자 식별 후 작성자 검증
+- 결과: 비정상 요청 차단 및 서버 기준 권한 검증 구조 확립
+
+### 문제 3. API마다 인증 로직이 반복됨
+
+- 원인: 각 라우트에서 인증 검증 로직 중복
+- 해결: `getCurrentUserId()` 유틸 함수로 분리
+- 결과: 코드 중복 감소 및 유지보수성 향상
+
+---
+
+## 폴더 구조
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+app/
+ ┣ api/
+ ┃ ┣ auth/
+ ┃ ┣ posts/
+ ┃ ┗ comments/
+ ┣ lounge/
+ ┣ mypage/
+ ┣ login/
+ ┣ signup/
+ ┗ posts/
+
+lib/
+ ┣ prisma.ts
+ ┗ auth.ts
+
+prisma/
+ ┗ schema.prisma
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
