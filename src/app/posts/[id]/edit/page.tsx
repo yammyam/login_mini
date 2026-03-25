@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import ui from "../../../styles/ui.module.css";
+import Loading from "@/components/Loading";
 
 export default function PostEditPage() {
   const router = useRouter();
@@ -83,7 +84,7 @@ export default function PostEditPage() {
     }
   };
 
-  if (loading) return <div>불러오는 중...</div>;
+  if (loading) return <Loading text="게시글 불러오는 중" />;
 
   return (
     <div className={styles.container}>
