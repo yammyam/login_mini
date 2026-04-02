@@ -84,7 +84,7 @@ export default function PostDetailPage() {
   }, [id]);
 
   const onDelete = async () => {
-    if (!confirm("정말 삭제할까요?")) return;
+    if (!confirm("글을 삭제하시겠습니까?")) return;
 
     const res = await fetch("/api/posts", {
       method: "DELETE",

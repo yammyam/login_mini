@@ -125,7 +125,11 @@ export default function PostEditPage() {
             <button
               className={styles.secondaryButton}
               type="button"
-              onClick={() => router.back()}
+              onClick={() => {
+                const check = confirm("글을 수정 중 입니다. 취소하시겠습니까?");
+                if (!check) return;
+                router.back();
+              }}
               disabled={saving}
             >
               취소

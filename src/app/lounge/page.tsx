@@ -49,7 +49,7 @@ export default function LoungePage() {
       alert("삭제 실패");
       return;
     }
-
+    alert("글 삭제 완료");
     await fetchPosts();
   };
 
@@ -139,7 +139,11 @@ export default function LoungePage() {
                   </button>
                   <button
                     className={ui.button}
-                    onClick={() => deletePost(item.id)}
+                    onClick={() => {
+                      const check = confirm("글을 삭제하시겠습니까?");
+                      if (!check) return;
+                      deletePost(item.id);
+                    }}
                   >
                     삭제
                   </button>

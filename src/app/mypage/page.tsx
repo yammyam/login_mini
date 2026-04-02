@@ -42,13 +42,22 @@ export default function MyPage() {
   };
 
   const deletePost = async (id: string) => {
-    await fetch("/api/posts", {
+    const res = await fetch("/api/posts", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ id }),
     });
+    if (res.status === 401) {
+      alert("로그인이 필요합니다.");
+      router.replace("/login");
+      return;
+    }
+    if (res.status === 403) {
+      alert("삭제 권한이 없습니다.");
+      return;
+    }
     alert("글 삭제 완료");
     await fetchPosts(); // 삭제 후 목록 새로고침
   };
@@ -170,7 +179,11 @@ export default function MyPage() {
                   </button>
                   <button
                     className={ui.button}
-                    onClick={() => deletePost(item.id)}
+                    onClick={() => {
+                      const check = confirm("글을 삭제하시겠습니까?");
+                      if (!check) return;
+                      deletePost(item.id);
+                    }}
                   >
                     삭제
                   </button>
